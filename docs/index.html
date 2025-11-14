@@ -10,33 +10,39 @@ body {
 margin: 0;
 background: black;
 overflow: hidden;
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-height: 100vh;
 font-family: Arial, sans-serif;
+height: 100vh;
+width: 100vw;
 }
 
 /* Campo para escrever legenda */
 #inputBox {
+position: absolute;
+top: 10px;
+left: 50%;
+transform: translateX(-50%);
 width: 60%;
 padding: 10px;
 font-size: 1.5rem;
 text-align: center;
-margin-bottom: 10px;
 border-radius: 5px;
 border: none;
+z-index: 10;
 }
 
 /* Botão iniciar */
 #startButton {
+position: absolute;
+top: 60px;
+left: 50%;
+transform: translateX(-50%);
 padding: 10px 20px;
 font-size: 1.3rem;
 border: none;
 border-radius: 5px;
 cursor: pointer;
 background-color: white;
+z-index: 10;
 }
 
 /* Slideshow ocupa a tela inteira */
@@ -46,7 +52,7 @@ top: 0;
 left: 0;
 width: 100vw;
 height: 100vh;
-display: none; /* começa escondido */
+display: none;
 overflow: hidden;
 }
 
@@ -54,13 +60,18 @@ overflow: hidden;
 position: absolute;
 width: 100%;
 height: 100%;
-object-fit: contain;
 opacity: 0;
 transition: opacity 1s ease-in-out;
 }
 
 .slide.active {
 opacity: 1;
+}
+
+.slide img {
+width: 100%;
+height: 100%;
+object-fit: cover;
 }
 
 /* Legenda sobre a imagem */
@@ -83,16 +94,16 @@ pointer-events: none;
 
 <div class="slideshow" id="slideshow">
 <div class="slide active">
-<img src="docs/imagens/1.png" alt="Slide 1">
-<div class="caption" id="caption"></div>
+<img src="imagens/1.png" alt="Slide 1">
+<div class="caption"></div>
 </div>
 <div class="slide">
-<img src="docs/imagens/2.png" alt="Slide 2">
-<div class="caption" id="caption"></div>
+<img src="imagens/2.png" alt="Slide 2">
+<div class="caption"></div>
 </div>
 <div class="slide">
-<img src="docs/imagens/3.jpeg" alt="Slide 3">
-<div class="caption" id="caption"></div>
+<img src="imagens/3.jpeg" alt="Slide 3">
+<div class="caption"></div>
 </div>
 </div>
 
@@ -100,37 +111,30 @@ pointer-events: none;
 document.addEventListener('DOMContentLoaded', () => {
 const slides = document.querySelectorAll('.slide');
 let index = 0;
-let interval;
 
 const inputBox = document.getElementById('inputBox');
 const startButton = document.getElementById('startButton');
 const slideshow = document.getElementById('slideshow');
 
-// Atualiza a legenda do slide ativo
 inputBox.addEventListener('input', () => {
 slides[index].querySelector('.caption').textContent = inputBox.value;
 });
 
 startButton.addEventListener('click', () => {
-// Esconde input e botão
 inputBox.style.display = 'none';
 startButton.style.display = 'none';
-
-// Mostra slideshow
 slideshow.style.display = 'block';
 
-// Fullscreen
 document.documentElement.requestFullscreen().catch(err => {
 console.log(`Erro fullscreen: ${err.message}`);
 });
 
-// Começa a troca automática de slides
-interval = setInterval(() => {
+slides[index].querySelector('.caption').textContent = '';
+
+setInterval(() => {
 slides[index].classList.remove('active');
 index = (index + 1) % slides.length;
 slides[index].classList.add('active');
-
-// Atualiza input com legenda existente do slide
 inputBox.value = slides[index].querySelector('.caption').textContent;
 }, 4000);
 });
