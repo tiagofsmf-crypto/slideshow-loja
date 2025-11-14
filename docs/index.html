@@ -9,52 +9,65 @@
 body {
 margin: 0;
 background: black;
-overflow: hidden;
 display: flex;
+flex-direction: column;
 justify-content: center;
 align-items: center;
-flex-direction: column;
 height: 100vh;
 font-family: Arial, sans-serif;
 }
 
-/* Campo de texto para o dono escrever legenda */
+/* Campo de texto e botão */
+#controls {
+margin-bottom: 20px;
+display: flex;
+flex-direction: column;
+align-items: center;
+}
+
 #inputBox {
 width: 60%;
 padding: 10px;
 font-size: 1.5rem;
 text-align: center;
 margin-bottom: 10px;
-border: none;
 border-radius: 5px;
+border: none;
 }
 
-/* Container do slideshow menor */
+#startButton {
+padding: 10px 20px;
+font-size: 1.3rem;
+border: none;
+border-radius: 5px;
+cursor: pointer;
+background-color: white;
+}
+
+/* Slideshow menor */
 .slideshow {
-width: 70vw; /* 70% da largura da tela */
-height: 50vh; /* 50% da altura da tela */
+width: 70vw;
+height: 50vh;
 position: relative;
 overflow: hidden;
 border: 2px solid white;
 border-radius: 10px;
+display: none; /* começa escondido até clicar em start */
 }
 
-/* Cada slide */
 .slide {
 position: absolute;
 width: 100%;
 height: 100%;
-object-fit: contain; /* mostra a imagem inteira sem cortar */
+object-fit: contain;
 opacity: 0;
 transition: opacity 1s ease-in-out;
 }
 
-/* Slide ativo */
 .slide.active {
 opacity: 1;
 }
 
-/* Legenda sobre a imagem */
 .caption {
 position: absolute;
 bottom: 5%;
@@ -69,10 +82,12 @@ pointer-events: none;
 </head>
 <body>
 
-<!-- Caixa de texto para legenda -->
+<div id="controls">
 <input type="text" id="inputBox" placeholder="Escreva aqui a legenda do slide ativo">
+<button id="startButton">Iniciar Slideshow</button>
+</div>
 
-<div class="slideshow">
+<div class="slideshow" id="slideshow">
 <div class="slide active">
 <img src="imagens/1.png" alt="Slide 1">
 <div class="caption">Hoje temos promoção!</div>
@@ -91,35 +106,41 @@ pointer-events: none;
 document.addEventListener('DOMContentLoaded', () => {
 const slides = document.querySelectorAll('.slide');
 let index = 0;
+let interval;
+
+const inputBox = document.getElementById('inputBox');
+const startButton = document.getElementById('startButton');
+const slideshow = document.getElementById('slideshow');
+const controls = document.getElementById('controls');
 
 function showNext() {
 slides[index].classList.remove('active');
 index = (index + 1) % slides.length;
 slides[index].classList.add('active');
-// Atualiza campo de texto para mostrar a legenda do slide ativo
 inputBox.value = slides[index].querySelector('.caption').textContent;
 }
 
-setInterval(showNext, 4000);
-
-// Fullscreen ao clicar
-document.body.addEventListener('click', () => {
-if (!document.fullscreenElement) {
-document.documentElement.requestFullscreen().catch(err => {
-console.log(`Erro ao tentar fullscreen: ${err.message}`);
-});
-}
-});
-
-// Atualizar legenda do slide ativo dinamicamente
-const inputBox = document.getElementById('inputBox');
+// Atualiza legenda do slide ativo enquanto digita
 inputBox.addEventListener('input', () => {
 const caption = slides[index].querySelector('.caption');
 caption.textContent = inputBox.value;
+});
+
+// Iniciar slideshow e fullscreen ao clicar no botão
+startButton.addEventListener('click', () => {
+controls.style.display = 'none';
+slideshow.style.display = 'block';
+
+// Tenta fullscreen
+document.documentElement.requestFullscreen().catch(err => {
+console.log(`Erro ao tentar fullscreen: ${err.message}`);
+});
+
+// Começa o slideshow
+interval = setInterval(showNext, 4000);
 });
 });
 </script>
 
 </body>
 </html>
-
