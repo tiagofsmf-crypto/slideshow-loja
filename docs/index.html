@@ -70,8 +70,8 @@ opacity: 1;
 .slide img {
 width: 100%;
 height: 100%;
-object-fit: contain; /* imagem inteira sem cortar */
-background-color: black; /* garante que áreas vazias fiquem pretas */
+object-fit: contain;
+background-color: black;
 }
 
 /* Legenda */
@@ -118,10 +118,11 @@ const inputBox = document.getElementById('inputBox');
 const startButton = document.getElementById('startButton');
 const slideshow = document.getElementById('slideshow');
 
-// Atualiza legenda do slide ativo
-inputBox.addEventListener('input', () => {
+function updateCaption() {
 slides[index].querySelector('.caption').textContent = inputBox.value;
-});
+}
+
+inputBox.addEventListener('input', updateCaption);
 
 startButton.addEventListener('click', () => {
 // Esconde input e botão
@@ -131,6 +132,9 @@ startButton.style.display = 'none';
 // Mostra slideshow
 slideshow.style.display = 'block';
 
+// Mostra legenda inicial
+updateCaption();
+
 // Tenta fullscreen
 if (!document.fullscreenElement) {
 document.documentElement.requestFullscreen().catch(err => {
@@ -138,20 +142,25 @@ console.log('Erro fullscreen: ', err);
 });
 }
 
-// Limpa legenda do primeiro slide
-slides[index].querySelector('.caption').textContent = '';
-
 // Loop automático de slides
 interval = setInterval(() => {
 slides[index].classList.remove('active');
 index = (index + 1) % slides.length;
 slides[index].classList.add('active');
-// Atualiza inputBox com legenda do slide atual
-inputBox.value = slides[index].querySelector('.caption').textContent;
+updateCaption(); // Mantém a mesma legenda para todos os slides
 }, 4000);
 });
 
-// ESC sai do fullscreen automaticamente (comportamento padrão do navegador)
+// Detecta quando sai do fullscreen (ESC)
+document.addEventListener('fullscreenchange', () => {
+if (!document.fullscreenElement) {
+// Saiu do fullscreen, mostra input e botão novamente
+clearInterval(interval);
+inputBox.style.display = 'block';
+startButton.style.display = 'block';
+slideshow.style.display = 'none';
+}
+});
 });
 </script>
 
