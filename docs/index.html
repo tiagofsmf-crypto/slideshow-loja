@@ -6,29 +6,37 @@
 <title>Slideshow Loja</title>
 
 <style>
+/* Corpo da página */
 body {
 margin: 0;
-overflow: hidden;
 background: black;
-}
-
-.slideshow {
-position: fixed;
-top: 0;
-left: 0;
-width: 100vw;
+overflow: hidden; /* remove barras de scroll */
+cursor: none; /* esconde cursor para imersão */
+display: flex;
+justify-content: center;
+align-items: center;
 height: 100vh;
 }
 
+/* Container do slideshow */
+.slideshow {
+width: 100%;
+height: 100%;
+position: relative;
+overflow: hidden;
+}
+
+/* Cada slide */
 .slide {
 position: absolute;
 width: 100%;
 height: 100%;
-object-fit: contain;
+object-fit: cover; /* cobre a tela inteira sem distorcer */
 opacity: 0;
-transition: opacity 1.5s ease-in-out;
+transition: opacity 1.5s ease-in-out; /* fade suave */
 }
 
+/* Slide ativo */
 .slide.active {
 opacity: 1;
 }
@@ -37,22 +45,34 @@ opacity: 1;
 <body>
 
 <div class="slideshow">
-<img class="slide active" src="1.png">
-<img class="slide" src="2.png">
-<img class="slide" src="3.jpeg">
+<img class="slide active" src="imagens/1.png" alt="Slide 1">
+<img class="slide" src="imagens/2.png" alt="Slide 2">
+<img class="slide" src="imagens/3.jpeg" alt="Slide 3">
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', () => {
 const slides = document.querySelectorAll('.slide');
 let index = 0;
 
+// Função para mostrar próximo slide
 function showNext() {
 slides[index].classList.remove('active');
 index = (index + 1) % slides.length;
 slides[index].classList.add('active');
 }
 
-setInterval(showNext, 4000);
+setInterval(showNext, 4000); // muda de slide a cada 4 segundos
+
+// Clicar na tela ativa fullscreen
+document.body.addEventListener('click', () => {
+if (!document.fullscreenElement) {
+document.documentElement.requestFullscreen().catch(err => {
+console.log(`Erro ao tentar fullscreen: ${err.message}`);
+});
+}
+});
+});
 </script>
 
 </body>
