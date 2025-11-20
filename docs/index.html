@@ -67,7 +67,8 @@ transition: opacity 1s ease-in-out;
 opacity: 1;
 }
 
-.slide img {
+.slide img,
+.slide video {
 width: 100%;
 height: 100%;
 object-fit: cover;
@@ -97,14 +98,20 @@ pointer-events: none;
 </div>
 
 <div class="slideshow" id="slideshow">
+<!-- Slide 1 - Vídeo -->
 <div class="slide active">
-<img src="imagens/video.mp4" alt="Slide 1">
+<video autoplay muted loop>
+<source src="imagens/video.mp4" type="video/mp4">
+Seu navegador não suporta o vídeo.
+</video>
 <div class="caption"></div>
 </div>
+<!-- Slide 2 - Imagem -->
 <div class="slide">
 <img src="imagens/imgtele2.png" alt="Slide 2">
 <div class="caption"></div>
 </div>
+<!-- Slide 3 - Imagem -->
 <div class="slide">
 <img src="imagens/3.jpeg" alt="Slide 3">
 <div class="caption"></div>
@@ -121,7 +128,6 @@ const inputContainer = document.getElementById('inputContainer');
 const startButton = document.getElementById('startButton');
 const slideshow = document.getElementById('slideshow');
 
-// Array para armazenar legendas digitadas pelo utilizador
 const legendas = [];
 
 function updateCaption() {
@@ -129,18 +135,15 @@ slides[index].querySelector('.caption').textContent = legendas[index];
 }
 
 startButton.addEventListener('click', () => {
-// Captura as legendas dos inputs
+// Captura legendas
 for (let i = 0; i < slides.length; i++) {
 const input = document.getElementById(`caption${i}`);
-legendas.push(input.value || `Slide ${i+1}`); // se vazio, usa padrão
+legendas.push(input.value || `Slide ${i+1}`);
 }
 
-// Esconde inputs
+// Esconde inputs e mostra slideshow
 inputContainer.style.display = 'none';
-
-// Mostra slideshow
 slideshow.style.display = 'block';
-
 updateCaption();
 
 if (!document.fullscreenElement) {
@@ -150,9 +153,20 @@ console.log('Erro fullscreen: ', err);
 }
 
 interval = setInterval(() => {
+// Remove slide atual
 slides[index].classList.remove('active');
+// Para vídeo antigo, se houver
+const oldVideo = slides[index].querySelector('video');
+if (oldVideo) oldVideo.pause();
+
+// Passa para próximo slide
 index = (index + 1) % slides.length;
 slides[index].classList.add('active');
+
+// Reproduz vídeo se houver
+const newVideo = slides[index].querySelector('video');
+if (newVideo) newVideo.play();
+
 updateCaption();
 }, 4000);
 });
