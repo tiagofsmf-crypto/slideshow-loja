@@ -15,7 +15,7 @@ height: 100vh;
 width: 100vw;
 }
 
-/* Input e botão sobre o slideshow */
+/* Input e botão antes do slideshow */
 #inputBox {
 position: fixed;
 top: 20px;
@@ -27,9 +27,7 @@ font-size: 1.5rem;
 text-align: center;
 border-radius: 5px;
 border: none;
-z-index: 20; /* acima do slideshow */
-background: rgba(0,0,0,0.5);
-color: white;
+z-index: 20;
 }
 
 #startButton {
@@ -72,15 +70,15 @@ opacity: 1;
 .slide img {
 width: 100%;
 height: 100%;
-object-fit: cover; /* Preenche toda a tela */
+object-fit: cover; /* mantém o tamanho atual */
 }
 
-/* Legenda sobre a imagem */
+/* Legenda centralizada horizontalmente e perto do topo */
 .caption {
 position: absolute;
-top: 50%; /* central vertical */
+top: 10%; /* 10% do topo da tela, não atrapalha a imagem */
 left: 50%;
-transform: translate(-50%, -50%);
+transform: translateX(-50%);
 color: white;
 font-size: 3rem;
 text-shadow: 2px 2px 5px black;
@@ -124,11 +122,12 @@ function updateCaption() {
 slides[index].querySelector('.caption').textContent = inputBox.value;
 }
 
-inputBox.addEventListener('input', updateCaption);
-
 startButton.addEventListener('click', () => {
-inputBox.style.display = 'block'; // Mantém o input visível
+// Esconde input e botão
+inputBox.style.display = 'none';
 startButton.style.display = 'none';
+
+// Mostra slideshow
 slideshow.style.display = 'block';
 
 updateCaption();
@@ -145,15 +144,6 @@ index = (index + 1) % slides.length;
 slides[index].classList.add('active');
 updateCaption();
 }, 4000);
-});
-
-document.addEventListener('fullscreenchange', () => {
-if (!document.fullscreenElement) {
-clearInterval(interval);
-inputBox.style.display = 'block';
-startButton.style.display = 'block';
-slideshow.style.display = 'none';
-}
 });
 });
 </script>
