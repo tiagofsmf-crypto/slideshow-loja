@@ -15,10 +15,10 @@ height: 100vh;
 width: 100vw;
 }
 
-/* Input e botão */
+/* Input e botão sobre o slideshow */
 #inputBox {
-position: absolute;
-top: 10px;
+position: fixed;
+top: 20px;
 left: 50%;
 transform: translateX(-50%);
 width: 60%;
@@ -27,12 +27,14 @@ font-size: 1.5rem;
 text-align: center;
 border-radius: 5px;
 border: none;
-z-index: 10;
+z-index: 20; /* acima do slideshow */
+background: rgba(0,0,0,0.5);
+color: white;
 }
 
 #startButton {
-position: absolute;
-top: 60px;
+position: fixed;
+top: 70px;
 left: 50%;
 transform: translateX(-50%);
 padding: 10px 20px;
@@ -41,7 +43,7 @@ border: none;
 border-radius: 5px;
 cursor: pointer;
 background-color: white;
-z-index: 10;
+z-index: 20;
 }
 
 /* Slideshow ocupa toda a tela */
@@ -67,25 +69,24 @@ transition: opacity 1s ease-in-out;
 opacity: 1;
 }
 
-/* Imagem preenche a tela inteira */
 .slide img {
 width: 100%;
 height: 100%;
-object-fit: cover; /* <-- PREENCHE A TELA */
-background-color: black;
+object-fit: cover; /* Preenche toda a tela */
 }
 
-/* Legenda */
+/* Legenda sobre a imagem */
 .caption {
 position: absolute;
-bottom: 5%;
-width: 100%;
-text-align: center;
+top: 50%; /* central vertical */
+left: 50%;
+transform: translate(-50%, -50%);
 color: white;
-font-size: 2rem;
+font-size: 3rem;
 text-shadow: 2px 2px 5px black;
+text-align: center;
+z-index: 15;
 pointer-events: none;
-z-index: 5;
 }
 </style>
 </head>
@@ -119,20 +120,18 @@ const inputBox = document.getElementById('inputBox');
 const startButton = document.getElementById('startButton');
 const slideshow = document.getElementById('slideshow');
 
-function updateAllCaptions() {
-slides.forEach(slide => {
-slide.querySelector('.caption').textContent = inputBox.value;
-});
+function updateCaption() {
+slides[index].querySelector('.caption').textContent = inputBox.value;
 }
 
-inputBox.addEventListener('input', updateAllCaptions);
+inputBox.addEventListener('input', updateCaption);
 
 startButton.addEventListener('click', () => {
-inputBox.style.display = 'none';
+inputBox.style.display = 'block'; // Mantém o input visível
 startButton.style.display = 'none';
 slideshow.style.display = 'block';
 
-updateAllCaptions();
+updateCaption();
 
 if (!document.fullscreenElement) {
 document.documentElement.requestFullscreen().catch(err => {
@@ -144,6 +143,7 @@ interval = setInterval(() => {
 slides[index].classList.remove('active');
 index = (index + 1) % slides.length;
 slides[index].classList.add('active');
+updateCaption();
 }, 4000);
 });
 
